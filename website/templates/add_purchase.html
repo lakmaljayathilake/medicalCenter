@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="col-md-6 offset-md-3">
+    <h1>Add Record:</h1>
+
+
+    <form method="POST" action="{% url 'add_purchase' %}">
+        {% csrf_token %}
+
+        <h3>Purchase Details</h3>
+        {{ form.as_p }}
+
+        <h3>Items</h3>
+        {{ formset.management_form }}
+
+        {% for form in formset %}
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+            {{ form.as_p }}
+        </div>
+        {% endfor %}
+
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+{% endblock %}

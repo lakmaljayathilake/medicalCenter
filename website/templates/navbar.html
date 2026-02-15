@@ -6,17 +6,21 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Visits</a>
-        <a class="nav-link" href="{% url 'home' %}">Drug Issuing (Sale)</a>
-        <a class="nav-link" href="{% url 'home' %}">Stock</a>
-        <a class="nav-link" href="{% url 'home' %}">Patients</a>
-        <a class="nav-link" href="{% url 'home' %}">Reports</a>
-        <a class="nav-link" href="{% url 'home' %}">Stock</a>
-
+        <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
         {% if user.is_authenticated %}
+        <a class="nav-link" href="{% url 'home' %}">New Consultation</a>
+        <a class="nav-link" href="{% url 'add_patient' %}">Register Patient</a>
+        <a class="nav-link" href="{% url 'home' %}">Patient's History</a>
+        <a class="nav-link" href="{% url 'add_category' %}">Category</a>
+        <a class="nav-link" href="{% url 'add_medicine' %}">Medicine</a>
+        <a class="nav-link" href="{% url 'add_purchase' %}">Add Purchase</a>
+        <a class="nav-link" href="{% url 'home' %}">Reports</a>
+          <a class="nav-link" href="{% url 'register' %}">Register User</a>
+
+        
+          <a class="nav-link" href="{% url 'add_record' %}">Add Record</a>
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         {% else %}
-          <a class="nav-link" href="{% url 'register' %}">Register</a>
           <a class="nav-link" href="{% url 'home' %}">Login</a>
         {% endif %}
       </div>

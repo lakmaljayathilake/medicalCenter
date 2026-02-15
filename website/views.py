@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm
+from .forms import *
+from .models import Record
 
 def home(request):
+
+    records = Record.objects.all()
+    
     if request.method=='POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -17,7 +21,7 @@ def home(request):
             messages.success(request, "There was an error logging in. Please try again...")
             return redirect('home')
     else:
-        return render(request, 'home.html', {})
+        return render(request, 'home.html', {'records':records})
 
 
 def logout_user(request):
@@ -40,3 +44,117 @@ def register_user(request):
     else:
         form = SignUpForm()
         return render(request, 'register.html', {'form': form})
+    
+    
+    return render(request, 'register.html', {'form': form})
+
+def customer_record(request,pk):
+    if request.user.is_authenticated:
+        # Look up record
+        customer_record = Record.objects.get(id=pk)
+        return render(request, 'record.html', {'customer_record': customer_record})
+    else:
+        messages.success(request, "You must be logged in to view that page")
+        return redirect('home')
+    
+def delete_record(request,pk):
+    if request.user.is_authenticated:
+        delete_it = Record.objects.get(id=pk)
+        delete_it.delete()
+        messages.success(request, "Record delete successfully..")
+        return redirect('home')
+    else:
+        messages.success(request, "You must be logged in to delete record")
+        return redirect('home')
+
+def add_record(request):
+    form = AddRecordForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            if form.is_valid():
+                add_record = form.save()
+                messages.success(request, "Record Added...")
+                return redirect('home')
+
+        return render(request, 'add_record.html', {'form':form})
+    else:
+        messages.success(request, "You must be logged in ...")
+        return redirect('home')
+    
+
+def update_record(request, pk):
+    if request.user.is_authenticated:
+        current_record = Record.objects.get(id=pk)
+        form = AddRecordForm(request.POST or None, instance=current_record)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Record Addedhas been updated...")
+            return redirect('home')
+        return render(request, 'update_record.html', {'form':form})
+    else:
+        messages.success(request, "You must be logged in ...")
+        return redirect('home')
+
+
+def add_patient(request):
+    form = AddPatientForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Patient Added...")
+                return redirect('home')
+
+        return render(request, 'add_patient.html', {'form':form})
+    else:
+        messages.success(request, "You must be logged in ...")
+        return redirect('home')
+    
+
+def add_category(request):
+    form = AddCategoryForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Category Added...")
+                return redirect('home')
+
+        return render(request, 'add_category.html', {'form':form})
+    else:
+        messages.success(request, "You must be logged in ...")
+        return redirect('home')
+    
+
+def add_medicine(request):
+    form = AddMedicineForm(request.POST or None)
+    if request.user.is_authenticated:
+        if request.method=="POST":
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Medicine Added...")
+                return redirect('home')
+
+        return render(request, 'add_medicine.html', {'form':form})
+    else:
+        messages.success(request, "You must be logged in ...")
+        return redirect('home')
+    
+def add_purchase(request):
+    if request.method == 'POST':
+        form = AddPurchaseForm(request.POST)
+        formset = PurchasesDtlFormSet(request.POST)
+
+        if form.is_valid() and formset.is_valid():
+            purchase = form.save()
+            formset.instance = purchase
+            formset.save()
+            return redirect('home')  # change to your url name
+    else:
+        form = AddPurchaseForm()
+        formset = PurchasesDtlFormSet()
+
+    return render(request, 'add_purchase.html', {
+        'form': form,
+        'formset': formset
+    })
